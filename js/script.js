@@ -1,7 +1,95 @@
 // ============================================================
 // KIVU AUTO STUDIO
-// COMPLETE JAVASCRIPT
+// COMPLETE JAVASCRIPT WITH SUPABASE DATABASE
 // ============================================================
+
+
+// ============================================================
+// SUPABASE CONFIGURATION
+// ============================================================
+
+const SUPABASE_URL =
+    "https://whejtexmpckfculfbbqm.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_qlkN4x7-ERSoEJ0WtDOrEg_3JxqAjYL";
+
+
+// ============================================================
+// SUPABASE INSERT HELPER
+// ============================================================
+
+async function insertIntoSupabase(
+    tableName,
+    data
+) {
+
+    const response =
+        await fetch(
+            `${SUPABASE_URL}/rest/v1/${tableName}`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json",
+
+                    "apikey":
+                        SUPABASE_KEY,
+
+                    "Authorization":
+                        `Bearer ${SUPABASE_KEY}`,
+
+                    "Prefer":
+                        "return=minimal"
+                },
+
+                body:
+                    JSON.stringify(data)
+            }
+        );
+
+
+    if (!response.ok) {
+
+        let errorMessage =
+            "Database request failed.";
+
+        try {
+
+            const errorData =
+                await response.json();
+
+            console.error(
+                "Supabase error:",
+                errorData
+            );
+
+            errorMessage =
+                errorData.message ||
+                errorData.hint ||
+                errorMessage;
+
+        } catch (error) {
+
+            console.error(
+                "Could not read Supabase error:",
+                error
+            );
+
+        }
+
+
+        throw new Error(
+            errorMessage
+        );
+
+    }
+
+
+    return true;
+
+}
 
 
 // ============================================================
@@ -9,11 +97,15 @@
 // ============================================================
 
 const currentYear =
-    document.getElementById("currentYear");
+    document.getElementById(
+        "currentYear"
+    );
 
 if (currentYear) {
+
     currentYear.textContent =
         new Date().getFullYear();
+
 }
 
 
@@ -22,38 +114,55 @@ if (currentYear) {
 // ============================================================
 
 const mobileMenuBtn =
-    document.getElementById("mobileMenuBtn");
+    document.getElementById(
+        "mobileMenuBtn"
+    );
 
 const mainNav =
-    document.getElementById("mainNav");
+    document.getElementById(
+        "mainNav"
+    );
 
-if (mobileMenuBtn && mainNav) {
+
+if (
+    mobileMenuBtn &&
+    mainNav
+) {
 
     mobileMenuBtn.addEventListener(
         "click",
         function () {
 
-            mainNav.classList.toggle("open");
+            mainNav.classList.toggle(
+                "open"
+            );
 
         }
     );
 
 
     const navLinks =
-        mainNav.querySelectorAll("a");
-
-    navLinks.forEach(function (link) {
-
-        link.addEventListener(
-            "click",
-            function () {
-
-                mainNav.classList.remove("open");
-
-            }
+        mainNav.querySelectorAll(
+            "a"
         );
 
-    });
+
+    navLinks.forEach(
+        function (link) {
+
+            link.addEventListener(
+                "click",
+                function () {
+
+                    mainNav.classList.remove(
+                        "open"
+                    );
+
+                }
+            );
+
+        }
+    );
 
 }
 
@@ -63,9 +172,17 @@ if (mobileMenuBtn && mainNav) {
 // ============================================================
 
 const bookingDate =
-    document.getElementById("bookingDate");
+    document.getElementById(
+        "bookingDate"
+    );
 
-if (bookingDate) {
+
+function setMinimumBookingDate() {
+
+    if (!bookingDate) {
+        return;
+    }
+
 
     const today =
         new Date();
@@ -76,20 +193,27 @@ if (bookingDate) {
     const month =
         String(
             today.getMonth() + 1
-        ).padStart(2, "0");
+        ).padStart(
+            2,
+            "0"
+        );
 
     const day =
         String(
             today.getDate()
-        ).padStart(2, "0");
+        ).padStart(
+            2,
+            "0"
+        );
 
-    const minimumDate =
-        `${year}-${month}-${day}`;
 
     bookingDate.min =
-        minimumDate;
+        `${year}-${month}-${day}`;
 
 }
+
+
+setMinimumBookingDate();
 
 
 // ============================================================
@@ -97,98 +221,179 @@ if (bookingDate) {
 // ============================================================
 
 const bookingForm =
-    document.getElementById("bookingForm");
+    document.getElementById(
+        "bookingForm"
+    );
 
 const bookingMessage =
-    document.getElementById("bookingMessage");
+    document.getElementById(
+        "bookingMessage"
+    );
+
 
 if (bookingForm) {
 
     bookingForm.addEventListener(
         "submit",
-        function (event) {
+
+        async function (event) {
 
             event.preventDefault();
 
 
-            const formData =
-                new FormData(
-                    bookingForm
+            const submitButton =
+                bookingForm.querySelector(
+                    'button[type="submit"]'
                 );
 
 
-            const booking = {
+            if (submitButton) {
 
-                name:
-                    formData.get("name"),
+                submitButton.disabled =
+                    true;
 
-                phone:
-                    formData.get("phone"),
+                submitButton.textContent =
+                    "Submitting...";
 
-                email:
-                    formData.get("email"),
-
-                vehicle:
-                    formData.get("vehicle"),
-
-                service:
-                    formData.get("service"),
-
-                date:
-                    formData.get("date"),
-
-                time:
-                    formData.get("time"),
-
-                notes:
-                    formData.get("notes"),
-
-                createdAt:
-                    new Date().toISOString()
-
-            };
-
-
-            console.log(
-                "Booking submitted:",
-                booking
-            );
+            }
 
 
             if (bookingMessage) {
 
                 bookingMessage.textContent =
-                    "Booking received. We will contact you to confirm your appointment.";
-
-                bookingMessage.style.color =
-                    "#15803d";
+                    "";
 
             }
 
 
-            bookingForm.reset();
+            try {
+
+                const formData =
+                    new FormData(
+                        bookingForm
+                    );
 
 
-            if (bookingDate) {
+                const booking = {
 
-                const today =
-                    new Date();
+                    name:
+                        String(
+                            formData.get(
+                                "name"
+                            )
+                        ).trim(),
 
-                const year =
-                    today.getFullYear();
+                    phone:
+                        String(
+                            formData.get(
+                                "phone"
+                            )
+                        ).trim(),
 
-                const month =
-                    String(
-                        today.getMonth() + 1
-                    ).padStart(2, "0");
+                    email:
+                        String(
+                            formData.get(
+                                "email"
+                            ) || ""
+                        ).trim() || null,
 
-                const day =
-                    String(
-                        today.getDate()
-                    ).padStart(2, "0");
+                    vehicle:
+                        String(
+                            formData.get(
+                                "vehicle"
+                            )
+                        ).trim(),
 
-                bookingDate.min =
-                    `${year}-${month}-${day}`;
+                    service:
+                        String(
+                            formData.get(
+                                "service"
+                            )
+                        ).trim(),
+
+                    preferred_date:
+                        String(
+                            formData.get(
+                                "date"
+                            )
+                        ).trim(),
+
+                    preferred_time:
+                        String(
+                            formData.get(
+                                "time"
+                            )
+                        ).trim(),
+
+                    notes:
+                        String(
+                            formData.get(
+                                "notes"
+                            ) || ""
+                        ).trim() || null,
+
+                    status:
+                        "New"
+
+                };
+
+
+                await insertIntoSupabase(
+                    "bookings",
+                    booking
+                );
+
+
+                if (bookingMessage) {
+
+                    bookingMessage.textContent =
+                        "Booking received successfully. We will contact you to confirm your appointment.";
+
+                    bookingMessage.style.color =
+                        "#15803d";
+
+                }
+
+
+                bookingForm.reset();
+
+                setMinimumBookingDate();
+
+
+                console.log(
+                    "Booking saved successfully:",
+                    booking
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Booking submission failed:",
+                    error
+                );
+
+
+                if (bookingMessage) {
+
+                    bookingMessage.textContent =
+                        "We could not submit your booking. Please try again.";
+
+                    bookingMessage.style.color =
+                        "#b91c1c";
+
+                }
+
+            } finally {
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.textContent =
+                        "Submit Booking";
+
+                }
 
             }
 
@@ -203,76 +408,172 @@ if (bookingForm) {
 // ============================================================
 
 const quoteForm =
-    document.getElementById("quoteForm");
+    document.getElementById(
+        "quoteForm"
+    );
 
 const quoteMessage =
-    document.getElementById("quoteMessage");
+    document.getElementById(
+        "quoteMessage"
+    );
+
 
 if (quoteForm) {
 
     quoteForm.addEventListener(
         "submit",
-        function (event) {
+
+        async function (event) {
 
             event.preventDefault();
 
 
-            const formData =
-                new FormData(
-                    quoteForm
+            const submitButton =
+                quoteForm.querySelector(
+                    'button[type="submit"]'
                 );
 
 
-            const request = {
+            if (submitButton) {
 
-                name:
-                    formData.get("name"),
+                submitButton.disabled =
+                    true;
 
-                phone:
-                    formData.get("phone"),
+                submitButton.textContent =
+                    "Submitting...";
 
-                email:
-                    formData.get("email"),
-
-                vehicle:
-                    formData.get("vehicle"),
-
-                requestType:
-                    formData.get("requestType"),
-
-                description:
-                    formData.get("description"),
-
-                preferredContact:
-                    formData.get("preferredContact"),
-
-                createdAt:
-                    new Date().toISOString(),
-
-                status:
-                    "New"
-
-            };
-
-
-            console.log(
-                "Service request submitted:",
-                request
-            );
+            }
 
 
             if (quoteMessage) {
 
                 quoteMessage.textContent =
-                    "Your service request has been received. Our team will review it and contact you.";
-
-                quoteMessage.style.color =
-                    "#15803d";
+                    "";
 
             }
 
 
-            quoteForm.reset();
+            try {
+
+                const formData =
+                    new FormData(
+                        quoteForm
+                    );
+
+
+                const request = {
+
+                    name:
+                        String(
+                            formData.get(
+                                "name"
+                            )
+                        ).trim(),
+
+                    phone:
+                        String(
+                            formData.get(
+                                "phone"
+                            )
+                        ).trim(),
+
+                    email:
+                        String(
+                            formData.get(
+                                "email"
+                            ) || ""
+                        ).trim() || null,
+
+                    vehicle:
+                        String(
+                            formData.get(
+                                "vehicle"
+                            )
+                        ).trim(),
+
+                    request_type:
+                        String(
+                            formData.get(
+                                "requestType"
+                            )
+                        ).trim(),
+
+                    description:
+                        String(
+                            formData.get(
+                                "description"
+                            )
+                        ).trim(),
+
+                    preferred_contact:
+                        String(
+                            formData.get(
+                                "preferredContact"
+                            )
+                        ).trim(),
+
+                    status:
+                        "New"
+
+                };
+
+
+                await insertIntoSupabase(
+                    "service_requests",
+                    request
+                );
+
+
+                if (quoteMessage) {
+
+                    quoteMessage.textContent =
+                        "Your service request has been received. Our team will review it and contact you.";
+
+                    quoteMessage.style.color =
+                        "#15803d";
+
+                }
+
+
+                quoteForm.reset();
+
+
+                console.log(
+                    "Service request saved successfully:",
+                    request
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Service request failed:",
+                    error
+                );
+
+
+                if (quoteMessage) {
+
+                    quoteMessage.textContent =
+                        "We could not submit your request. Please try again.";
+
+                    quoteMessage.style.color =
+                        "#b91c1c";
+
+                }
+
+            } finally {
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.textContent =
+                        "Submit Service Request";
+
+                }
+
+            }
 
         }
     );
@@ -285,63 +586,144 @@ if (quoteForm) {
 // ============================================================
 
 const contactForm =
-    document.getElementById("contactForm");
+    document.getElementById(
+        "contactForm"
+    );
 
 const contactFormMessage =
     document.getElementById(
         "contactFormMessage"
     );
 
+
 if (contactForm) {
 
     contactForm.addEventListener(
         "submit",
-        function (event) {
+
+        async function (event) {
 
             event.preventDefault();
 
 
-            const formData =
-                new FormData(
-                    contactForm
+            const submitButton =
+                contactForm.querySelector(
+                    'button[type="submit"]'
                 );
 
 
-            const contactMessage = {
+            if (submitButton) {
 
-                name:
-                    formData.get("name"),
+                submitButton.disabled =
+                    true;
 
-                email:
-                    formData.get("email"),
+                submitButton.textContent =
+                    "Sending...";
 
-                message:
-                    formData.get("message"),
-
-                createdAt:
-                    new Date().toISOString()
-
-            };
-
-
-            console.log(
-                "Contact message submitted:",
-                contactMessage
-            );
+            }
 
 
             if (contactFormMessage) {
 
                 contactFormMessage.textContent =
-                    "Message sent successfully. We will get back to you.";
-
-                contactFormMessage.style.color =
-                    "#15803d";
+                    "";
 
             }
 
 
-            contactForm.reset();
+            try {
+
+                const formData =
+                    new FormData(
+                        contactForm
+                    );
+
+
+                const message = {
+
+                    name:
+                        String(
+                            formData.get(
+                                "name"
+                            )
+                        ).trim(),
+
+                    email:
+                        String(
+                            formData.get(
+                                "email"
+                            )
+                        ).trim(),
+
+                    message:
+                        String(
+                            formData.get(
+                                "message"
+                            )
+                        ).trim(),
+
+                    status:
+                        "New"
+
+                };
+
+
+                await insertIntoSupabase(
+                    "contact_messages",
+                    message
+                );
+
+
+                if (contactFormMessage) {
+
+                    contactFormMessage.textContent =
+                        "Message sent successfully. We will get back to you.";
+
+                    contactFormMessage.style.color =
+                        "#15803d";
+
+                }
+
+
+                contactForm.reset();
+
+
+                console.log(
+                    "Contact message saved successfully:",
+                    message
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Contact message failed:",
+                    error
+                );
+
+
+                if (contactFormMessage) {
+
+                    contactFormMessage.textContent =
+                        "We could not send your message. Please try again.";
+
+                    contactFormMessage.style.color =
+                        "#b91c1c";
+
+                }
+
+            } finally {
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.textContent =
+                        "Send Message";
+
+                }
+
+            }
 
         }
     );
@@ -359,7 +741,10 @@ const revealItems =
     );
 
 
-if ("IntersectionObserver" in window) {
+if (
+    "IntersectionObserver"
+    in window
+) {
 
     const observer =
         new IntersectionObserver(
@@ -378,6 +763,7 @@ if ("IntersectionObserver" in window) {
                                 .add(
                                     "reveal-visible"
                                 );
+
 
                             observer.unobserve(
                                 entry.target
@@ -420,6 +806,7 @@ if ("IntersectionObserver" in window) {
 
 document.addEventListener(
     "click",
+
     function (event) {
 
         if (
@@ -460,13 +847,13 @@ document.addEventListener(
 
 
 // ============================================================
-// DEMO NOTE
+// READY
 // ============================================================
 
 console.log(
-    "Kivu Auto Studio demo loaded successfully."
+    "Kivu Auto Studio loaded."
 );
 
 console.log(
-    "Forms are currently demo-only. Supabase database connection will be added next."
+    "Supabase database connection active."
 );
