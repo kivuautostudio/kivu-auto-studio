@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Admin Dashboard | Kivu Auto Studio
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="css/admin.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     ADMIN LOGIN
+========================================================= -->
+
+<section
+    id="adminLoginScreen"
+    class="login-screen"
+>
+
+    <div class="login-card">
+
+        <div class="admin-logo">
+            K
+        </div>
+
+        <p class="eyebrow">
+            KIVU AUTO STUDIO
+        </p>
+
+        <h1>
+            Admin Login
+        </h1>
+
+        <p class="login-description">
+            Sign in to manage bookings,
+            service requests and customer messages.
+        </p>
+
+
+        <form id="adminLoginForm">
+
+            <div class="form-group">
+
+                <label for="adminEmail">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="adminEmail"
+                    required
+                    autocomplete="email"
+                    placeholder="admin@example.com"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="adminPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="adminPassword"
+                    required
+                    autocomplete="current-password"
+                    placeholder="Enter your password"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary-btn full-width"
+            >
+                Sign In
+            </button>
+
+
+            <p
+                id="loginMessage"
+                class="form-message"
+            ></p>
+
+        </form>
+
+
+        <a
+            href="index.html"
+            class="back-link"
+        >
+            ← Back to website
+        </a>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     ADMIN APPLICATION
+========================================================= -->
+
+<div
+    id="adminApp"
+    class="admin-app hidden"
+>
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
+
+        <div class="sidebar-brand">
+
+            <div class="sidebar-logo">
+                K
+            </div>
+
+            <div>
+
+                <strong>
+                    Kivu Auto Studio
+                </strong>
+
+                <span>
+                    Business Manager
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <button
+                class="nav-item active"
+                data-screen="dashboard"
+            >
+                <span>▦</span>
+                Dashboard
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-screen="bookings"
+            >
+                <span>▣</span>
+                Bookings
+
+                <span
+                    id="bookingNavBadge"
+                    class="nav-badge hidden"
+                >
+                    0
+                </span>
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-screen="requests"
+            >
+                <span>◆</span>
+                Service Requests
+
+                <span
+                    id="requestNavBadge"
+                    class="nav-badge hidden"
+                >
+                    0
+                </span>
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-screen="messages"
+            >
+                <span>✉</span>
+                Messages
+
+                <span
+                    id="messageNavBadge"
+                    class="nav-badge hidden"
+                >
+                    0
+                </span>
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a
+                href="index.html"
+                class="website-link"
+            >
+                View Website
+            </a>
+
+
+            <button
+                id="logoutBtn"
+                class="logout-btn"
+            >
+                Sign Out
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN AREA
+    ====================================================== -->
+
+    <main class="admin-main">
+
+
+        <!-- =================================================
+             TOP BAR
+        ================================================== -->
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    id="sidebarToggle"
+                    class="sidebar-toggle"
+                >
+                    ☰
+                </button>
+
+
+                <div>
+
+                    <h2 id="pageTitle">
+                        Dashboard
+                    </h2>
+
+                    <p id="pageSubtitle">
+                        Overview of your business activity.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-profile">
+
+                <div class="profile-icon">
+                    A
+                </div>
+
+                <div>
+
+                    <strong>
+                        Administrator
+                    </strong>
+
+                    <span id="adminEmailDisplay">
+                        -
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             CONTENT
+        ================================================== -->
+
+        <div class="admin-content">
+
+
+            <!-- =============================================
+                 DASHBOARD
+            ============================================== -->
+
+            <section
+                id="dashboardScreen"
+                class="admin-screen"
+            >
+
+                <div class="welcome-panel">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            BUSINESS OVERVIEW
+                        </p>
+
+                        <h1>
+                            Welcome back.
+                        </h1>
+
+                        <p>
+                            Here's what's happening
+                            at Kivu Auto Studio.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="refreshDashboardBtn"
+                        class="secondary-btn"
+                    >
+                        Refresh Data
+                    </button>
+
+                </div>
+
+
+
+                <!-- STATISTICS -->
+
+                <div class="stats-grid">
+
+
+                    <article class="stat-card">
+
+                        <span class="stat-label">
+                            Total Bookings
+                        </span>
+
+                        <strong
+                            id="totalBookings"
+                            class="stat-number"
+                        >
+                            0
+                        </strong>
+
+                        <span class="stat-description">
+                            All appointments
+                        </span>
+
+                    </article>
+
+
+
+                    <article class="stat-card">
+
+                        <span class="stat-label">
+                            New Bookings
+                        </span>
+
+                        <strong
+                            id="newBookings"
+                            class="stat-number"
+                        >
+                            0
+                        </strong>
+
+                        <span class="stat-description">
+                            Waiting for review
+                        </span>
+
+                    </article>
+
+
+
+                    <article class="stat-card">
+
+                        <span class="stat-label">
+                            Service Requests
+                        </span>
+
+                        <strong
+                            id="totalRequests"
+                            class="stat-number"
+                        >
+                            0
+                        </strong>
+
+                        <span class="stat-description">
+                            Customer requests
+                        </span>
+
+                    </article>
+
+
+
+                    <article class="stat-card">
+
+                        <span class="stat-label">
+                            New Messages
+                        </span>
+
+                        <strong
+                            id="newMessages"
+                            class="stat-number"
+                        >
+                            0
+                        </strong>
+
+                        <span class="stat-description">
+                            Awaiting response
+                        </span>
+
+                    </article>
+
+
+                </div>
+
+
+
+                <!-- RECENT ACTIVITY -->
+
+                <div class="dashboard-grid">
+
+
+                    <section class="dashboard-panel">
+
+                        <div class="panel-heading">
+
+                            <div>
+
+                                <h3>
+                                    Recent Bookings
+                                </h3>
+
+                                <p>
+                                    Latest customer appointments
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                class="text-btn"
+                                data-open-screen="bookings"
+                            >
+                                View all
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            id="recentBookings"
+                            class="activity-list"
+                        >
+
+                            <div class="empty-state">
+
+                                <p>
+                                    Loading bookings...
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+
+                    <section class="dashboard-panel">
+
+                        <div class="panel-heading">
+
+                            <div>
+
+                                <h3>
+                                    Recent Requests
+                                </h3>
+
+                                <p>
+                                    Latest service enquiries
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                class="text-btn"
+                                data-open-screen="requests"
+                            >
+                                View all
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            id="recentRequests"
+                            class="activity-list"
+                        >
+
+                            <div class="empty-state">
+
+                                <p>
+                                    Loading requests...
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =============================================
+                 BOOKINGS
+            ============================================== -->
+
+            <section
+                id="bookingsScreen"
+                class="admin-screen hidden"
+            >
+
+                <div class="screen-heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            APPOINTMENTS
+                        </p>
+
+                        <h1>
+                            Bookings
+                        </h1>
+
+                        <p>
+                            Manage customer appointments
+                            and booking statuses.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="refreshBookingsBtn"
+                        class="secondary-btn"
+                    >
+                        Refresh
+                    </button>
+
+                </div>
+
+
+
+                <div class="toolbar">
+
+                    <input
+                        type="search"
+                        id="bookingSearch"
+                        placeholder="Search customer, vehicle or service..."
+                    >
+
+
+                    <select id="bookingStatusFilter">
+
+                        <option value="all">
+                            All statuses
+                        </option>
+
+                        <option value="New">
+                            New
+                        </option>
+
+                        <option value="Confirmed">
+                            Confirmed
+                        </option>
+
+                        <option value="Completed">
+                            Completed
+                        </option>
+
+                        <option value="Cancelled">
+                            Cancelled
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="table-card">
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Customer
+                                    </th>
+
+                                    <th>
+                                        Vehicle
+                                    </th>
+
+                                    <th>
+                                        Service
+                                    </th>
+
+                                    <th>
+                                        Appointment
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Actions
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="bookingsTableBody">
+
+                                <tr>
+
+                                    <td colspan="6">
+
+                                        <div class="empty-state">
+                                            Loading bookings...
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =============================================
+                 SERVICE REQUESTS
+            ============================================== -->
+
+            <section
+                id="requestsScreen"
+                class="admin-screen hidden"
+            >
+
+                <div class="screen-heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            CUSTOMER REQUESTS
+                        </p>
+
+                        <h1>
+                            Service Requests
+                        </h1>
+
+                        <p>
+                            Review problems, quotations
+                            and customer enquiries.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="refreshRequestsBtn"
+                        class="secondary-btn"
+                    >
+                        Refresh
+                    </button>
+
+                </div>
+
+
+
+                <div class="toolbar">
+
+                    <input
+                        type="search"
+                        id="requestSearch"
+                        placeholder="Search customer, vehicle or request..."
+                    >
+
+
+                    <select id="requestStatusFilter">
+
+                        <option value="all">
+                            All statuses
+                        </option>
+
+                        <option value="New">
+                            New
+                        </option>
+
+                        <option value="Contacted">
+                            Contacted
+                        </option>
+
+                        <option value="Quoted">
+                            Quoted
+                        </option>
+
+                        <option value="Completed">
+                            Completed
+                        </option>
+
+                        <option value="Cancelled">
+                            Cancelled
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div
+                    id="requestsList"
+                    class="request-list"
+                >
+
+                    <div class="empty-state">
+                        Loading service requests...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =============================================
+                 MESSAGES
+            ============================================== -->
+
+            <section
+                id="messagesScreen"
+                class="admin-screen hidden"
+            >
+
+                <div class="screen-heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            CUSTOMER COMMUNICATION
+                        </p>
+
+                        <h1>
+                            Messages
+                        </h1>
+
+                        <p>
+                            Messages submitted through
+                            the website contact form.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="refreshMessagesBtn"
+                        class="secondary-btn"
+                    >
+                        Refresh
+                    </button>
+
+                </div>
+
+
+
+                <div
+                    id="messagesList"
+                    class="message-list"
+                >
+
+                    <div class="empty-state">
+                        Loading messages...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<!-- =========================================================
+     DETAIL MODAL
+========================================================= -->
+
+<div
+    id="detailModal"
+    class="modal hidden"
+>
+
+    <div
+        class="modal-backdrop"
+        id="modalBackdrop"
+    ></div>
+
+
+    <div class="modal-card">
+
+        <div class="modal-header">
+
+            <div>
+
+                <p
+                    class="eyebrow"
+                    id="modalEyebrow"
+                >
+                    DETAILS
+                </p>
+
+                <h2 id="modalTitle">
+                    Customer Details
+                </h2>
+
+            </div>
+
+
+            <button
+                id="closeModalBtn"
+                class="modal-close"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div
+            id="modalContent"
+            class="modal-content"
+        >
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script src="js/admin.js"></script>
+
+</body>
+
+</html>
